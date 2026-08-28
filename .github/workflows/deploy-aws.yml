@@ -17,7 +17,7 @@ concurrency:
 jobs:
   validate:
     if: github.event_name != 'pull_request' || startsWith(github.head_ref, 'feature/')
-    runs-on: [self-hosted, linux, x64, auth-runner]
+    runs-on: [self-hosted, linux, x64, rds-runner]
     defaults:
       run:
         working-directory: src
@@ -36,7 +36,7 @@ jobs:
   deploy:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master'))
     needs: validate
-    runs-on: [self-hosted, linux, x64, auth-runner]
+    runs-on: [self-hosted, linux, x64, rds-runner]
     environment: production
     defaults:
       run:
