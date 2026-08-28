@@ -31,6 +31,6 @@ variable "db_username" {
 }
 
 variable "db_password" {
-  type      = string
-  default   = "minha-senha"
+  type    = string
+  default = "minha-senha"
 }
