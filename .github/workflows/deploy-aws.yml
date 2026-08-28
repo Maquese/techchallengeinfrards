@@ -1,0 +1,59 @@
+name: Deploy AWS
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: terraform-production
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.event_name != 'pull_request' || startsWith(github.head_ref, 'feature/')
+    runs-on: [self-hosted, linux, x64, auth-runner]
+    defaults:
+      run:
+        working-directory: src
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Terraform init
+        run: terraform init -input=false -backend=false
+      - name: Terraform fmt check
+        run: terraform fmt -check -recursive
+      - name: Terraform validate
+        run: terraform validate
+
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master'))
+    needs: validate
+    runs-on: [self-hosted, linux, x64, auth-runner]
+    environment: production
+    defaults:
+      run:
+        working-directory: src
+    env:
+      AWS_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+      TF_VAR_db_password: ${{ secrets.TF_VAR_RDS_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check AWS session
+        run: aws sts get-caller-identity
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Terraform init
+        run: terraform init -input=false -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" -backend-config="region=${{ env.AWS_DEFAULT_REGION }}"
+      - name: Terraform plan
+        run: terraform plan -input=false -out=tfplan
+      - name: Terraform apply
+        run: terraform apply -input=false -auto-approve tfplan

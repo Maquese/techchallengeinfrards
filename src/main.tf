@@ -43,19 +43,22 @@ resource "aws_db_subnet_group" "rds" {
 }
 
 resource "aws_db_instance" "main" {
-  identifier             = "techchallenge-mysql"
-  allocated_storage      = 10
-  db_name                = var.db_name
-  engine                 = "mysql"
-  engine_version         = "8.0"
-  instance_class         = "db.t3.micro"
-  username               = var.db_username
-  password               = var.db_password
-  parameter_group_name   = "default.mysql8.0"
-  skip_final_snapshot    = true
-  db_subnet_group_name   = aws_db_subnet_group.rds.name
-  vpc_security_group_ids = [aws_security_group.rds.id]
-  publicly_accessible    = false
+  identifier              = "techchallenge-mysql"
+  allocated_storage       = 10
+  db_name                 = var.db_name
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.t3.micro"
+  username                = var.db_username
+  password                = var.db_password
+  parameter_group_name    = "default.mysql8.0"
+  skip_final_snapshot     = false
+  deletion_protection     = true
+  backup_retention_period = 7
+  storage_encrypted       = true
+  db_subnet_group_name    = aws_db_subnet_group.rds.name
+  vpc_security_group_ids  = [aws_security_group.rds.id]
+  publicly_accessible     = false
 }
 
 output "rds_endpoint" {

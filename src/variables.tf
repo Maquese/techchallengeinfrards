@@ -32,5 +32,5 @@ variable "db_username" {
 
 variable "db_password" {
   type      = string
-  default = "minha-senha"
+  sensitive = true
 }
