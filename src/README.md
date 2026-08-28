@@ -9,4 +9,4 @@ terraform output -raw rds_endpoint
 terraform output -raw rds_security_group_id
 ```
 
-Passe `rds_endpoint`, `rds_security_group_id` e a senha aos pipelines da Lambda e do EKS. O state contem a senha; use backend remoto protegido em ambientes reais.
+O backend S3 já está configurado em `main.tf`. Passe `rds_endpoint`, `rds_security_group_id` e a senha aos pipelines da Lambda e do EKS. O state contém a senha; mantenha o bucket protegido.

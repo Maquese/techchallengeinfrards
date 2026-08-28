@@ -6,7 +6,7 @@ terraform {
     }
   }
 
-   backend "s3" {
+  backend "s3" {
     bucket       = "amz-lab-techchallenge-pt3"
     key          = "techchallenge/rds/terraform.tfstate"
     region       = "us-east-1"
