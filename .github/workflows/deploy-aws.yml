@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - master
       - 'feature/**'
   pull_request:
     branches: [main]
@@ -68,7 +67,7 @@ jobs:
             }
 
   deploy:
-    if: (github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master')) || (github.event_name == 'workflow_dispatch' && github.ref_name == 'main')
+    if: (github.event_name == 'push' && github.ref_name == 'main') || (github.event_name == 'workflow_dispatch' && github.ref_name == 'main')
     needs: validate
     runs-on: [self-hosted, linux, x64, rds-runner]
     environment: production
