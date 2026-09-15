@@ -17,7 +17,7 @@ O objetivo do módulo é centralizar a criação do banco principal do projeto, 
 
 ## Pré-requisitos
 
-- Terraform instalado e configurado.
+- Terraform instalado e configurado. 
 - AWS CLI autenticado.
 - Permissões para criar RDS, SG, subnet groups e consultar a VPC.
 - VPC, sub-redes e Security Group de origem já existentes.
