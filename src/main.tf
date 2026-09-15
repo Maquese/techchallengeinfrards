@@ -60,8 +60,8 @@ resource "aws_db_instance" "main" {
   username                = var.db_username
   password                = var.db_password
   parameter_group_name    = "default.mysql8.0"
-  skip_final_snapshot     = false
-  deletion_protection     = true
+  skip_final_snapshot     = true
+  deletion_protection     = false
   backup_retention_period = 7
   storage_encrypted       = true
   db_subnet_group_name    = aws_db_subnet_group.rds.name
