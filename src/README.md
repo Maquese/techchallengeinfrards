@@ -1,16 +1,17 @@
-# Módulo Terraform - RDS MySQL
+# Módulo Terraform - RDS MySQL e DynamoDB
 
 ## Propósito
 
-Este módulo provisiona uma instância de banco de dados MySQL na AWS usando Amazon RDS, com controle de acesso por Security Group e integração com a VPC do ambiente do Tech Challenge.
+Este módulo provisiona uma instância MySQL na AWS usando Amazon RDS e uma tabela DynamoDB para orçamentos, além do controle de acesso ao RDS por Security Group.
 
-O objetivo do módulo é centralizar a criação do banco principal do projeto, garantindo que os demais serviços consigam se conectar ao banco de forma segura e controlada.
+O objetivo do módulo é centralizar a criação dos bancos de dados do projeto para consumo pelos demais serviços.
 
 ## Tecnologias
 
 - Terraform
 - HashiCorp AWS Provider
 - Amazon RDS
+- Amazon DynamoDB
 - Amazon VPC e Security Groups
 - AWS S3 para backend remoto
 - GitHub Actions
@@ -43,6 +44,7 @@ terraform apply tfplan
 terraform output -raw rds_endpoint
 terraform output -raw rds_security_group_id
 terraform output -raw rds_identifier
+terraform output -raw dynamodb_orcamento_table_name
 ```
 
 ## Deploy
@@ -74,7 +76,7 @@ flowchart TD
     C -->|Yes| E[Terraform init]
     E --> F[Terraform plan]
     F --> G[Terraform apply]
-    G --> H[Amazon RDS provisionado]
+    G --> H[Amazon RDS e DynamoDB provisionados]
 ```
 
 ## Diagrama do componente
@@ -85,6 +87,7 @@ flowchart LR
     SG --> RDS[(MySQL RDS)]
     Terraform[Terraform] --> AWS[AWS]
     AWS --> RDS
+    AWS --> DynamoDB[(DynamoDB Orcamento)]
     AWS --> SG
 ```
 
@@ -111,5 +114,10 @@ Após o apply, os outputs mais relevantes são:
 - `rds_port`
 - `rds_security_group_id`
 - `rds_identifier`
+- `dynamodb_orcamento_table_name`
 
 Esses valores devem ser repassados aos outros componentes da solução.
+
+## Tabela DynamoDB
+
+A tabela `Orcamento` usa `orcamentoid` como chave de partição e `ordemservicoid` como chave de ordenação. Ambas as chaves são do tipo String. A cobrança está configurada no modo sob demanda (`PAY_PER_REQUEST`).
