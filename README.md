@@ -2,15 +2,16 @@
 
 ## Propósito
 
-Este repositório provisiona a infraestrutura de banco de dados relacional da solução Tech Challenge na AWS, com foco em um instância MySQL gerenciada pelo Amazon RDS e um Security Group que permite a conexão apenas dos serviços autorizados da arquitetura (por exemplo, EKS e Lambda).
+Este repositório provisiona a infraestrutura de dados da solução Tech Challenge na AWS, incluindo uma instância MySQL gerenciada pelo Amazon RDS, uma tabela DynamoDB para orçamentos e um Security Group para a conexão com o RDS.
 
-A responsabilidade principal deste módulo é manter a camada de dados isolada, versionada e automatizada via Terraform, deixando a base de dados pronta para os demais repositórios da aplicação consumirem suas credenciais e endpoint.
+A responsabilidade principal deste módulo é manter a camada de dados versionada e automatizada via Terraform para consumo pelos demais componentes da aplicação.
 
 ## Tecnologias
 
 - Terraform
 - AWS Provider para Terraform
 - Amazon RDS para MySQL 8.0
+- Amazon DynamoDB
 - AWS VPC, sub-redes e Security Groups
 - AWS S3 como backend remoto do estado
 - GitHub Actions com self-hosted runner
@@ -29,7 +30,7 @@ Antes de executar este projeto, certifique-se de que:
 
 ## Estrutura do repositório
 
-- [src/main.tf](src/main.tf): definição da infraestrutura principal do RDS.
+- [src/main.tf](src/main.tf): definição da infraestrutura do RDS e da tabela DynamoDB.
 - [src/variables.tf](src/variables.tf): variáveis configuráveis do módulo.
 - [.github/workflows/deploy-aws.yml](.github/workflows/deploy-aws.yml): pipeline de validação e deploy.
 - [src/README.md](src/README.md): documentação técnica do módulo Terraform.
@@ -45,6 +46,7 @@ terraform plan -var "db_password=<sua_senha>" -out=tfplan
 terraform apply tfplan
 terraform output -raw rds_endpoint
 terraform output -raw rds_security_group_id
+terraform output -raw dynamodb_orcamento_table_name
 ```
 
 Se quiser validar sem aplicar:
@@ -102,6 +104,7 @@ flowchart LR
     Runner --> Terraform[Terraform]
     Terraform --> AWS[AWS]
     AWS --> RDS[(Amazon RDS MySQL)]
+    AWS --> DynamoDB[(DynamoDB Orcamento)]
     AWS --> SG[Security Group]
     SG --> RDS
     RDS --> App[Aplicação / Serviços do Tech Challenge]
@@ -131,4 +134,5 @@ terraform init
 terraform plan -var "db_password=<senha>" -out=tfplan
 terraform apply tfplan
 terraform output -raw rds_endpoint
+terraform output -raw dynamodb_orcamento_table_name
 ```
