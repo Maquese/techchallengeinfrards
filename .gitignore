@@ -45,5 +45,3 @@ terraform.rc
 
 # GitHub Actions self-hosted runner files
 src/actions-runner/
-
-rds

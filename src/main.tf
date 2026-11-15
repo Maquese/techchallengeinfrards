@@ -50,7 +50,7 @@ resource "aws_db_subnet_group" "rds" {
   subnet_ids = var.subnet_ids
 }
 
-resource "aws_db_instance" "main" {
+resource "aws_db_instance" "main" { 
   identifier              = "clienteveiculo-mysql"
   allocated_storage       = 10
   db_name                 = var.db_name_main
